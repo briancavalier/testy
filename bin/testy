@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+const { findTests, runTests, tryTestFunction, tap, collect, accumAsync, print } = require('..')
+require('ts-node').register({ compilerOptions: { module: 'commonjs' }, transpileOnly: true })
+findTests(process.argv.slice(2))
+  // .then(tests => runTests(tryTestFunction, accumAsync(tap(process.stdout)), tests))
+  .then(tests => runTests(tryTestFunction, accumAsync(print(process.stdout, collect())), tests))

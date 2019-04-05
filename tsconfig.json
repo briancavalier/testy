@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "es5",
+    "module": "commonjs",
+    "lib": [
+      "es5",
+      "es2015",
+      "es2016",
+      "es2017"
+    ],
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "incremental": true,
+    "strict": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationDir": "dist",
+    "outDir": "dist",
+    "typeRoots": [
+      "node_modules/@types"
+    ]
+  },
+  "exclude": [
+    "experiments/**/*.ts",
+    "examples/**/*.ts",
+    "node_modules"
+  ],
+  "include": [
+    "src"
+  ]
+}

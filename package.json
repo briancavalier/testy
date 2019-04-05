@@ -1,0 +1,24 @@
+{
+  "name": "testy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^3.4.1"
+  },
+  "dependencies": {
+    "@types/cli-cursor": "^2.1.0",
+    "@types/node": "^11.13.0",
+    "chalk": "^2.4.2",
+    "cli-cursor": "^2.1.0",
+    "tiny-glob": "^0.2.6",
+    "ts-node": "^8.0.3"
+  }
+}
