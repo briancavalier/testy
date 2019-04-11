@@ -39,7 +39,8 @@ export async function run(cwd: string, globs: string[], out: Writable): Promise<
       switch (event.type) {
         case 'file:enter':
           files += 1
-          path.push(relative(cwd, event.label)); break
+          path.push(relative(cwd, event.label))
+          break
         case 'describe:enter':
           path.push(event.label)
           break
