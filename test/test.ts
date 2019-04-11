@@ -1,14 +1,23 @@
-import { describe, it, todo } from '..'
-import assert from 'assert'
+import { eq } from '../src/assert'
+import { describe, it, test } from '../src/test'
 
-export default [
-  it('hi', () => { }),
-  it('2', () => {
-    assert(true)
-  }),
-  describe('async', [
-    it('1', () => Promise.resolve()),
-    it('2', async () => {})
+export default test([
+  describe('nested', [
+    it('should be nested', async function* () {
+      yield eq(1, 1)
+    })
   ]),
-  todo('todo this')
-]
+  it('runs', async function* () {
+    yield eq(1, 1)
+    // yield eq(1, 2)
+  }),
+  it('fails', async function* () {
+    yield eq(1, 1)
+    yield eq(1, 2)
+    yield eq(1, 1)
+  }),
+  it('throws', async function* () {
+    yield eq(1, 1)
+    throw new Error('oops')
+  })
+])

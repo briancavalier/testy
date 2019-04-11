@@ -1,24 +1,23 @@
 {
   "name": "testy",
   "version": "1.0.0",
-  "description": "",
+  "description": "test stuff",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "test": "tsc --noEmit"
   },
+  "bin": "./dist/cli.js",
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
-    "typescript": "^3.4.1"
+    "typescript": "^3.4.1",
+    "ts-node": "^8.0.3"
   },
   "dependencies": {
-    "@types/cli-cursor": "^2.1.0",
     "@types/node": "^11.13.0",
     "chalk": "^2.4.2",
-    "cli-cursor": "^2.1.0",
-    "tiny-glob": "^0.2.6",
-    "ts-node": "^8.0.3"
+    "tiny-glob": "^0.2.6"
   }
 }

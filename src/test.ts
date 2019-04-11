@@ -1,34 +1,42 @@
-export type Path = string[]
+import { Assertion } from './assert'
 
-export type TestPlan<A> =
-  | { type: 'Group', path: Path, tests: TestPlan<A>[] }
-  | Test<A>
+export type TestCase = () => AsyncIterable<Assertion> | Iterable<Assertion>
 
-export type Test<A> =
-  | { type: 'Test', path: Path, test: A }
-  | { type: 'Todo', path: Path }
+export type TestEvent =
+  | { type: 'assert', label: string, assertion: Assertion }
+  | { type: 'it:enter', label: string }
+  | { type: 'it:leave', label: string }
+  | { type: 'it:error', label: string, error: Error }
+  | { type: 'it:skip', label: string }
+  | { type: 'it:todo', label: string }
+  | { type: 'describe:enter', label: string }
+  | { type: 'describe:leave', label: string }
+  | { type: 'file:enter', label: string }
+  | { type: 'file:leave', label: string }
 
-export type TestResult<A> =
-  | { type: 'pass', test: A }
-  | { type: 'fail', test: A, reason: Error }
-  | { type: 'skip', test: A }
-  | { type: 'todo', test: A }
-
-export type Evaluate<A, R> = (a: A) => R
-
-export type Accumulate<R, T, S> = {
-  init(): T,
-  tally: (t: T, r: R) => T,
-  summarize: (t: T) => S
+export async function* it (label: string, test: TestCase): AsyncIterable<TestEvent> {
+  yield { type: 'it:enter', label }
+  try {
+    for await (const assertion of test()) {
+      const cont = yield { type: 'assert', label, assertion }
+      if (!cont) break
+    }
+  } catch (error) {
+    yield { type: 'it:error', label, error }
+  }
+  yield { type: 'it:leave', label }
 }
 
-export const runTests = <A, R, T, S>(evaluate: Evaluate<TestPlan<A>, R>, accumulate: Accumulate<R, T, S>, tests: TestPlan<A>[]): S =>
-  accumulate.summarize(foldTests(evaluate, accumulate, [], accumulate.init(), tests))
+export async function* describe(label: string, tests: AsyncIterable<TestEvent>[]): AsyncIterable<TestEvent> {
+  yield { type: 'describe:enter', label }
+  for (const t of tests) {
+    yield* t
+  }
+  yield { type: 'describe:leave', label }
+}
 
-export const foldTest = <A, R, T, S> (evaluate: Evaluate<TestPlan<A>, R>, accumulate: Accumulate<R, T, S>, path: Path, t: T, test: TestPlan<A>): T =>
-  test.type === 'Group'
-    ? foldTests(evaluate, accumulate, [...path, ...test.path], t, test.tests)
-    : accumulate.tally(t, evaluate({ ...test, path: [...path, ...test.path] }))
-
-export const foldTests = <A, R, T, S>(evaluate: Evaluate<TestPlan<A>, R>, accumulate: Accumulate<R, T, S>, path: Path, t: T, tests: TestPlan<A>[]): T =>
-  tests.reduce((t, test) => foldTest(evaluate, accumulate, path, t, test), t)
+export async function* test(tests: AsyncIterable<TestEvent>[]): AsyncIterable<TestEvent> {
+  for (const t of tests) {
+    yield* t
+  }
+}
