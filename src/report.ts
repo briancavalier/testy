@@ -7,7 +7,7 @@ export const println = (s: string, w: Writable): boolean =>
   w.write(`${s}\n`)
 
 export async function reportJson(out: Writable, events: AsyncIterable<TestEvent>): Promise<void> {
-  for await (const e of events) println(`${JSON.stringify(e)}`, out)
+  for await (const event of events) println(`${JSON.stringify(event)}`, out)
 }
 
 export async function report(cwd: string, out: Writable, events: AsyncIterable<TestEvent>): Promise<void> {
@@ -51,9 +51,8 @@ export async function report(cwd: string, out: Writable, events: AsyncIterable<T
 
   const elapsed = Date.now() - start
   const passed = assertions - (failures.length + errors.length)
-  println(`Pass:       ${passed}`, out)
-  println(`Fail:       ${failures.length}`, out)
-  println(`Error:      ${errors.length}`, out)
+
+  println(`\n${passed} passed, ${failures.length} failed, ${errors.length} errors\n`, out)
   println(`Time:       ${elapsed}ms`, out)
   println(`Files:      ${files} (${(1000 * files / elapsed).toFixed(2)} per sec)`, out)
   println(`Tests:      ${tests} (${(tests / files).toFixed(2)} per file, ${(1000 * tests / elapsed).toFixed(2)} per sec)`, out)
