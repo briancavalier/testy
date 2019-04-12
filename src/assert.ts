@@ -1,11 +1,11 @@
 
 export type Assertion =
-  | { ok: true, message: string, at: Function }
-  | { ok: false, message: string, at: Function, failure: AssertionFailed }
+  | { ok: true, message: string }
+  | { ok: false, message: string, failure: AssertionFailed }
 
 export const assertion = (ok: boolean, message: string, at: Function): Assertion =>
-  ok ? ({ ok, message, at })
-    : ({ ok, message, at, failure: new AssertionFailed(message, at) })
+  ok ? ({ ok, message })
+    : ({ ok, message, failure: new AssertionFailed(message, at) })
 
 export class AssertionFailed extends Error {
   constructor(public readonly message: string, at?: Function) {

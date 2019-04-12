@@ -14,6 +14,3 @@ export const showAssertion = (path: string[], a: Assertion): string =>
 
 export const showError = (path: string[], e: Error): string =>
   `${showPath(path)}${PATH_SEP}${chalk.red(String(e))}`
-
-export const print = (s: string, w: Writable): boolean =>
-  w.write(`\n${s}`)
