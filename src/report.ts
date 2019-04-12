@@ -6,11 +6,12 @@ import { Writable } from 'stream'
 export const println = (s: string, w: Writable): boolean =>
   w.write(`${s}\n`)
 
-export async function reportJson(out: Writable, events: AsyncIterable<TestEvent>): Promise<void> {
+export async function reportJson(out: Writable, events: AsyncIterable<TestEvent>): Promise<number> {
   for await (const event of events) println(`${JSON.stringify(event)}`, out)
+  return 0
 }
 
-export async function report(cwd: string, out: Writable, events: AsyncIterable<TestEvent>): Promise<void> {
+export async function report(cwd: string, out: Writable, events: AsyncIterable<TestEvent>): Promise<number> {
   let path = []
   let failures = []
   let errors = []
@@ -52,9 +53,11 @@ export async function report(cwd: string, out: Writable, events: AsyncIterable<T
   const elapsed = Date.now() - start
   const passed = assertions - (failures.length + errors.length)
 
-  println(`\n${passed} passed, ${failures.length} failed, ${errors.length} errors\n`, out)
+  println(`\n${passed} passed, ${failures.length} failed, ${errors.length} crashed\n`, out)
   println(`Time:       ${elapsed}ms`, out)
   println(`Files:      ${files} (${(1000 * files / elapsed).toFixed(2)} per sec)`, out)
   println(`Tests:      ${tests} (${(tests / files).toFixed(2)} per file, ${(1000 * tests / elapsed).toFixed(2)} per sec)`, out)
   println(`Assertions: ${assertions} (${(assertions / tests).toFixed(2)} per test, ${(assertions / files).toFixed(2)} per file, ${(1000 * assertions / elapsed).toFixed(2)} per sec)`, out)
+
+  return failures.length + errors.length
 }

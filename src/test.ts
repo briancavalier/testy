@@ -30,9 +30,7 @@ export async function* it (label: string, test: TestCase): AsyncIterable<TestEve
 export async function* describe(label: string, tests: AsyncIterable<TestEvent>[]): AsyncIterable<TestEvent> {
   const cont = yield { type: 'group:enter', label }
   if (cont) {
-    for (const t of tests) {
-      yield* t
-    }
+    for (const t of tests) yield* t
   }
   yield { type: 'group:leave', label }
 }

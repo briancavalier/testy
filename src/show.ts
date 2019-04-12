@@ -5,7 +5,7 @@ import { Writable } from 'stream'
 export const PATH_SEP = chalk.gray.dim(' › ')
 
 export const showPath = (path: string[]): string => {
-  const name = [...path.slice(0, path.length - 1).map(s => chalk.gray(s)), chalk.whiteBright(path[path.length - 1])]
+  const name = [...path.slice(0, path.length - 1), chalk.whiteBright(path[path.length - 1])]
   return `${name.join(PATH_SEP)}`
 }
 
