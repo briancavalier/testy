@@ -12,7 +12,7 @@ export type TestEvent =
   | { type: 'file:enter', label: string }
   | { type: 'file:leave', label: string }
 
-export async function* it (label: string, test: TestCase): AsyncIterable<TestEvent> {
+export async function * it (label: string, test: TestCase): AsyncIterable<TestEvent> {
   const cont = yield { type: 'test:enter', label }
   if (cont) {
     try {
@@ -27,10 +27,10 @@ export async function* it (label: string, test: TestCase): AsyncIterable<TestEve
   yield { type: 'test:leave', label }
 }
 
-export async function* describe(label: string, tests: AsyncIterable<TestEvent>[]): AsyncIterable<TestEvent> {
+export async function * describe (label: string, ...tests: AsyncIterable<TestEvent>[]): AsyncIterable<TestEvent> {
   const cont = yield { type: 'group:enter', label }
   if (cont) {
-    for (const t of tests) yield* t
+    for (const t of tests) yield * t
   }
   yield { type: 'group:leave', label }
 }

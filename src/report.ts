@@ -6,12 +6,12 @@ import { Writable } from 'stream'
 export const println = (s: string, w: Writable): boolean =>
   w.write(`${s}\n`)
 
-export async function reportJson(out: Writable, events: AsyncIterable<TestEvent>): Promise<number> {
+export async function reportJson (out: Writable, events: AsyncIterable<TestEvent>): Promise<number> {
   for await (const event of events) println(`${JSON.stringify(event)}`, out)
   return 0
 }
 
-export async function report(cwd: string, out: Writable, events: AsyncIterable<TestEvent>): Promise<number> {
+export async function report (cwd: string, out: Writable, events: AsyncIterable<TestEvent>): Promise<number> {
   let path = []
   let failures = []
   let errors = []

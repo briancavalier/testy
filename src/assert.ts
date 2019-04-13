@@ -8,7 +8,7 @@ export const assertion = (ok: boolean, message: string, at: Function): Assertion
     : ({ ok, message, failure: new AssertionFailed(message, at) })
 
 export class AssertionFailed extends Error {
-  constructor(public readonly message: string, at?: Function) {
+  constructor (public readonly message: string, at?: Function) {
     super(message)
     this.name = 'AssertionFailed'
     if (Error.captureStackTrace) Error.captureStackTrace(this, at)
