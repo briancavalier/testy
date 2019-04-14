@@ -12,7 +12,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "getopts": "^2.2.4",
+    "getopts": "2.2.4",
     "ts-node": "8.0.3",
     "typescript": "3.4.3"
   },
