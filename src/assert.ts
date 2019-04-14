@@ -16,7 +16,7 @@ export class AssertionFailed extends Error {
 }
 
 export const assert = (ok: boolean, message?: string): Assertion =>
-  assertion(ok, message || 'assert failed', assert)
+  assertion(ok, message || 'assert', assert)
 
 export const eq = <A>(a0: A, a1: A, message?: string): Assertion =>
   assertion(a0 === a1, message || `eq(${a0}, ${a1})`, eq)
