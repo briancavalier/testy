@@ -12,4 +12,4 @@ export const showAssertion = (path: string[], a: Assertion): string =>
   `${showPath(path)}${PATH_SEP}${(a.ok ? a.message : chalk.red(a.message))}`
 
 export const showError = (path: string[], e: Error): string =>
-  `${showPath(path)}${PATH_SEP}${chalk.red(String(e))}`
+  `${showPath(path)}${PATH_SEP}${chalk.red.bold(String(e))}`
