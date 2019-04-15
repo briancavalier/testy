@@ -1,5 +1,4 @@
-import { assert, eq } from '../src/assert'
-import { describe, it } from '../src/test'
+import { assert, describe, eq, it } from '../src'
 
 export default describe('the thing',
   describe('nested',

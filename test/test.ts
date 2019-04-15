@@ -1,5 +1,4 @@
-import { eq } from '../src/assert'
-import { describe, it } from '../src/test'
+import { describe, eq, it } from '../src'
 
 export default describe('the thing',
   describe('nested',
@@ -14,6 +13,7 @@ export default describe('the thing',
   it('runs', async function * () {
     yield eq(1, 1)
   }),
+  it('has no assertions', async function * (): AsyncIterable<any> {}),
   it('fails', async function * () {
     yield eq(1, 1)
     yield eq(1, 2)

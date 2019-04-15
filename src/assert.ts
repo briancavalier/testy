@@ -1,4 +1,3 @@
-
 export type Assertion =
   | { ok: true, message: string }
   | { ok: false, message: string, failure: AssertionFailed }

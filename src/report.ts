@@ -1,51 +1,51 @@
+import { TestEvaluationEvent } from './event'
 import { showAssertion, showError } from './show'
-import { TestEvent } from './test'
 import { relative } from 'path'
 import { Writable } from 'stream'
 
 export const println = (s: string, w: Writable): boolean =>
   w.write(`${s}\n`)
 
-export async function reportJson (out: Writable, events: AsyncIterable<TestEvent>): Promise<number> {
+export const relativize = (base: string, path: string[]): string[] =>
+  [relative(base, path[0]), ...path.slice(1)]
+
+export async function reportJson(out: Writable, events: AsyncIterable<TestEvaluationEvent>): Promise<number> {
   for await (const event of events) println(`${JSON.stringify(event)}`, out)
   return 0
 }
 
-export async function report (cwd: string, out: Writable, events: AsyncIterable<TestEvent>): Promise<number> {
-  let path = []
+export async function report(basePath: string, out: Writable, events: AsyncIterable<TestEvaluationEvent>): Promise<number> {
   let failures = []
   let errors = []
   let files = 0
   let tests = 0
   let assertions = 0
+  let testAssertions = 0
 
   const start = Date.now()
   for await (const event of events) {
     switch (event.type) {
       case 'file:enter':
         files += 1
-        path.push(relative(cwd, event.label))
-        break
-      case 'group:enter':
-        path.push(event.label)
         break
       case 'test:enter':
         tests += 1
-        path.push(event.label)
+        break
+      case 'test:leave':
+        if(testAssertions === 0) {
+          println(showError(relativize(basePath, event.path), new Error('no assertions')), out)
+        }
+        testAssertions = 0
         break
       case 'test:error':
-        errors.push({ path: path.slice(), error: event.error })
-        println(showError(path, event.error), out)
-        break
-      case 'file:leave':
-      case 'group:leave':
-      case 'test:leave':
-        path.pop()
+        errors.push(event)
+        println(showError(relativize(basePath, event.path), event.error), out)
         break
       case 'assert':
         assertions += 1
-        if (!event.assertion.ok) failures.push({ path: path.slice(), assertion: event.assertion })
-        println(showAssertion(path, event.assertion), out)
+        testAssertions += 1
+        if (!event.assertion.ok) failures.push(event)
+        println(showAssertion(relativize(basePath, event.path), event.assertion), out)
         break
     }
   }
