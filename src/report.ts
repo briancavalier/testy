@@ -1,5 +1,5 @@
 import { TestEvaluationEvent } from './event'
-import { showAssertion, showError } from './show'
+import { showAssertion, showError, showSkip } from './show'
 import { relative } from 'path'
 import { Writable } from 'stream'
 
@@ -16,7 +16,7 @@ export async function reportJson(out: Writable, events: AsyncIterable<TestEvalua
 
 export async function report(basePath: string, out: Writable, events: AsyncIterable<TestEvaluationEvent>): Promise<number> {
   let files = 0
-  let pass = 0
+  let tests = 0
   let fail = 0
   let skip = 0
   let crash = 0
@@ -24,10 +24,14 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
   let testAssertions = 0
 
   const start = Date.now()
+
   for await (const event of events) {
     switch (event.type) {
       case 'file:enter':
         files += 1
+        break
+      case 'test:enter':
+        tests += 1
         break
       case 'test:leave':
         if(testAssertions === 0) {
@@ -37,7 +41,9 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
         testAssertions = 0
         break
       case 'test:skip':
+        tests += 1
         skip += 1
+        println(showSkip(relativize(basePath, event.path)), out)
         break
       case 'test:error':
         crash += 1
@@ -47,14 +53,13 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
         assertions += 1
         testAssertions += 1
         if (!event.assertion.ok) fail += 1
-        else pass += 1
         println(showAssertion(relativize(basePath, event.path), event.assertion), out)
         break
     }
   }
 
   const elapsed = Date.now() - start
-  const tests = pass + fail + crash + skip
+  const pass = tests - (fail + crash + skip)
 
   println(`\n${pass} passed, ${fail} failed, ${skip} skipped, ${crash} crashed\n`, out)
   println(`Time:       ${elapsed}ms`, out)

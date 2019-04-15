@@ -27,6 +27,7 @@ export async function* evaluateTestCase(path: string[], test: TestCase): AsyncIt
   try {
     for await (const assertion of test()) {
       yield { type: 'assert', path, assertion }
+      if (!assertion.ok) break
     }
   } catch (error) {
     yield { type: 'test:error', path, error }

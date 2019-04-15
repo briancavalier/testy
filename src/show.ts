@@ -13,3 +13,6 @@ export const showAssertion = (path: string[], a: Assertion): string =>
 
 export const showError = (path: string[], e: Error): string =>
   `${showPath(path)}${PATH_SEP}${chalk.red.bold(String(e))}`
+
+export const showSkip = (path: string[]): string =>
+  `${showPath(path)} ${chalk.yellow('(Skipped)')}`
