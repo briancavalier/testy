@@ -89,25 +89,14 @@ type ErrorJson = {
 
 export async function reportJson(out: Writable, events: AsyncIterable<TestEvaluationEvent>): Promise<number> {
   for await (const event of events) {
-    switch (event.type) {
-      case 'test:error':
-        println(JSON.stringify({ ...event, error: errorToJson(event.error) }), out)
-        break
-      case 'assert':
-        if (!event.assertion.ok) {
-          println(JSON.stringify({ ...event, assertion: { ...event.assertion, failure: errorToJson(event.assertion.failure) } }), out)
-        } else {
-          println(JSON.stringify(event), out)
-        }
-        break
-      default:
-        println(JSON.stringify(event), out)
-        break
-    }
+    println(JSON.stringify(event, serializeErrors), out)
   }
 
   return 0
 }
+
+const serializeErrors = (key: string, value: any): any =>
+  value instanceof Error ? errorToJson(value) : value
 
 const errorToJson = (e: Error): ErrorJson =>
   ({ name: e.name, message: e.message, stack: e.stack })
