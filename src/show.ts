@@ -15,8 +15,14 @@ export const showAssertion = (path: string[], a: Assertion): string =>
 export const showError = (path: string[], e: Error): string =>
   `${showPath(path)}${PATH_SEP}${chalk.red.bold(String(e))}`
 
+export const showStack = (e: Error): string =>
+  chalk.dim.gray(e.stack || e.message)
+
 export const showSkip = (path: string[]): string =>
-  `${showPath(path)}${PATH_SEP}${chalk.yellow('Skipped')}`
+  `${showPath(path)}${PATH_SEP}${chalk.yellow('skipped')}`
+
+export const showFileLink = (c: ErrorContext): string =>
+  chalk.underline(`${c.file}:${c.line}:${c.column}`)
 
 export const showErrorContext = (before: number, after: number, c: ErrorContext): string => {
   const li = c.line - 1

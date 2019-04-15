@@ -14,7 +14,8 @@ export type TestDiscoveryEvent =
 export type TestEvaluationEvent =
   | TestTreeEvent
   | { type: 'test:skip', path: string[] }
-  | { type: 'test:enter', path: string[] }
-  | { type: 'test:leave', path: string[], assertions: number }
+  | { type: 'test:start', path: string[] }
+  | { type: 'test:pass', path: string[], assertions: number }
+  | { type: 'test:fail', path: string[] }
   | { type: 'test:error', path: string[], error: Error }
   | { type: 'assert', path: string[], assertion: Assertion }
