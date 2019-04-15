@@ -1,6 +1,6 @@
 import { Assertion } from './assert'
 
-export type TestCase = () => AsyncIterable<Assertion> | Iterable<Assertion>
+export type TestCase = () => AsyncIterable<Assertion>
 
 export type TestEvent =
   | { type: 'assert', label: string, assertion: Assertion }
