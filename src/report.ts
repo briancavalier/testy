@@ -30,7 +30,7 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
   let fail = 0
   let skip = 0
   let crash = 0
-  let assertions = 0
+  let assert = 0
   let fileCache: FileCache = {}
 
   const start = Date.now()
@@ -60,7 +60,7 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
         await showFileContext(event.error, fileCache, out)
         break
       case 'assert':
-        assertions += 1
+        assert += 1
         println(showAssertion(relativize(basePath, event.path), event.assertion), out)
         if (!event.assertion.ok) {
           fail += 1
@@ -77,7 +77,7 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
   println(`Time:       ${elapsed}ms`, out)
   println(`Files:      ${files} (${(1000 * files / elapsed).toFixed(2)} per sec)`, out)
   println(`Tests:      ${tests} (${(tests / files).toFixed(2)} per file, ${(1000 * tests / elapsed).toFixed(2)} per sec)`, out)
-  println(`Assertions: ${assertions} (${(assertions / tests).toFixed(2)} per test, ${(assertions / files).toFixed(2)} per file, ${(1000 * assertions / elapsed).toFixed(2)} per sec)`, out)
+  println(`Assertions: ${assert} (${(assert / tests).toFixed(2)} per test, ${(assert / files).toFixed(2)} per file, ${(1000 * assert / elapsed).toFixed(2)} per sec)`, out)
 
   return fail + crash
 }

@@ -16,7 +16,7 @@ export const showError = (path: string[], e: Error): string =>
   `${showPath(path)}${PATH_SEP}${chalk.red.bold(String(e))}`
 
 export const showSkip = (path: string[]): string =>
-  `${showPath(path)} ${chalk.yellow('(Skipped)')}`
+  `${showPath(path)}${PATH_SEP}${chalk.yellow('Skipped')}`
 
 export const showErrorContext = (before: number, after: number, c: ErrorContext): string => {
   const li = c.line - 1
