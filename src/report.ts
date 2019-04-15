@@ -1,5 +1,6 @@
+import { FileCache, getErrorContext } from './context'
 import { TestEvaluationEvent } from './event'
-import { showAssertion, showError, showSkip } from './show'
+import { showAssertion, showError, showErrorContext, showSkip } from './show'
 import { relative } from 'path'
 import { Writable } from 'stream'
 
@@ -14,6 +15,15 @@ export async function reportJson(out: Writable, events: AsyncIterable<TestEvalua
   return 0
 }
 
+export async function showFileContext (e: Error, cache: FileCache, out: Writable): Promise<void> {
+  const [context, updatedCache] = getErrorContext(e, cache)
+  Object.assign(cache, updatedCache)
+  const c = await (context)
+  if (c) {
+    println(`\n${showErrorContext(2, 2, c)}\n`, out)
+  }
+}
+
 export async function report(basePath: string, out: Writable, events: AsyncIterable<TestEvaluationEvent>): Promise<number> {
   let files = 0
   let tests = 0
@@ -21,7 +31,7 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
   let skip = 0
   let crash = 0
   let assertions = 0
-  let testAssertions = 0
+  let fileCache: FileCache = {}
 
   const start = Date.now()
 
@@ -34,11 +44,10 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
         tests += 1
         break
       case 'test:leave':
-        if(testAssertions === 0) {
+        if(event.assertions === 0) {
           fail += 1
           println(showError(relativize(basePath, event.path), new Error('no assertions')), out)
         }
-        testAssertions = 0
         break
       case 'test:skip':
         tests += 1
@@ -48,12 +57,15 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
       case 'test:error':
         crash += 1
         println(showError(relativize(basePath, event.path), event.error), out)
+        await showFileContext(event.error, fileCache, out)
         break
       case 'assert':
         assertions += 1
-        testAssertions += 1
-        if (!event.assertion.ok) fail += 1
         println(showAssertion(relativize(basePath, event.path), event.assertion), out)
+        if (!event.assertion.ok) {
+          fail += 1
+          await showFileContext(event.assertion.failure, fileCache, out)
+        }
         break
     }
   }
