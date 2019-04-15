@@ -13,6 +13,7 @@ export type TestDiscoveryEvent =
 
 export type TestEvaluationEvent =
   | TestTreeEvent
+  | { type: 'test:skip', path: string[] }
   | { type: 'test:enter', path: string[] }
   | { type: 'test:leave', path: string[] }
   | { type: 'test:error', path: string[], error: Error }
