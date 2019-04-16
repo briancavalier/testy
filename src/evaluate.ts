@@ -24,16 +24,19 @@ export async function* evaluateTests(events: AsyncIterable<TestDiscoveryEvent>):
 
 export async function* evaluateTestCase(path: string[], test: TestCase): AsyncIterable<TestEvaluationEvent> {
   yield { type: 'test:start', path }
-  let assertions = 0
+
   try {
+    let assertions = 0
     for await (const assertion of test()) {
       assertions += 1
       yield { type: 'assert', path, assertion }
+
       if (!assertion.ok) {
         yield { type: 'test:fail', path }
         return
       }
     }
+
     yield { type: 'test:pass', path, assertions }
   } catch (error) {
     yield { type: 'test:error', path, error }
