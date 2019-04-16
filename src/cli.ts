@@ -4,18 +4,16 @@ import { report, reportJson } from './report'
 import getopts from 'getopts'
 import glob from 'tiny-glob'
 
-export async function* findTestFiles(cwd: string, globs: string[]): AsyncIterable<string[]> {
+export async function* findTestFiles(cwd: string, globs: string[]): AsyncIterable<string> {
   const options = { absolute: true, filesOnly: true, cwd }
-  for (const g of globs) yield glob(g, options)
-}
-
-export async function* flattenIterable<A>(aia: AsyncIterable<Iterable<A>>): AsyncIterable<A> {
-  for await (const aa of aia) yield* aa
+  for (const g of globs) {
+    yield* await glob(g, options)
+  }
 }
 
 const cwd = process.cwd()
 const argv = getopts(process.argv.slice(2))
-const events = evaluateTests(discoverTests(flattenIterable(findTestFiles(cwd, argv._))))
+const events = evaluateTests(discoverTests(findTestFiles(cwd, argv._)))
 const result = argv.report === 'json'
   ? reportJson(process.stdout, events)
   : report(cwd, process.stdout, events)

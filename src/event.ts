@@ -1,4 +1,4 @@
-import { Assertion } from './assert'
+import { Assertion, AssertionFailed } from './assert'
 import { TestCase } from './test'
 
 export type TestTreeEvent =
@@ -16,6 +16,6 @@ export type TestEvaluationEvent =
   | { type: 'test:skip', path: string[] }
   | { type: 'test:start', path: string[] }
   | { type: 'test:pass', path: string[], assertions: number }
-  | { type: 'test:fail', path: string[] }
+  | { type: 'test:fail', path: string[], reason: AssertionFailed }
   | { type: 'test:error', path: string[], error: Error }
   | { type: 'assert', path: string[], assertion: Assertion }

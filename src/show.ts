@@ -31,7 +31,7 @@ export const showAssertion = (path: string[], a: Assertion): string =>
   `${showPath(path)}${PATH_SEP}${(a.ok ? a.message : chalk.red(a.message))}`
 
 export const showError = (path: string[], e: Error): string =>
-  `${showPath(path)}${PATH_SEP}${chalk.red.bold(String(e))}`
+  `${showPath(path)}${PATH_SEP}${chalk.red.bold(`${e.name}: ${e.message}`)}`
 
 export const showStack = (e: Error): string =>
   chalk.dim.gray(e.stack || e.message)

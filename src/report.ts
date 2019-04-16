@@ -1,6 +1,6 @@
 import { FileCache, findErrorLocation, getErrorContext } from './context'
 import { TestEvaluationEvent } from './event'
-import { showAssertion, showError, showErrorContext, showFileLink, showPath, showSkip, showStack, showSummary } from './show'
+import { showAssertion, showError, showErrorContext, showFileLink, showSkip, showStack, showSummary } from './show'
 import { relative } from 'path'
 import { Writable } from 'stream'
 
@@ -56,19 +56,17 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
         break
       case 'test:fail':
         fail += 1
+        fileCache = await showFileContext(event.reason, fileCache, out)
         break
       case 'test:error':
         crash += 1
         println(showError(relativize(basePath, event.path), event.error), out)
-        await showFileContext(event.error, fileCache, out)
+        fileCache = await showFileContext(event.error, fileCache, out)
         println(`${showStack(event.error)}\n`, out)
         break
       case 'assert':
         assert += 1
         println(showAssertion(relativize(basePath, event.path), event.assertion), out)
-        if (!event.assertion.ok) {
-          fileCache = await showFileContext(event.assertion.failure, fileCache, out)
-        }
         break
     }
   }
@@ -99,8 +97,5 @@ export async function reportJson(out: Writable, events: AsyncIterable<TestEvalua
   return 0
 }
 
-const serializeErrors = (key: string, value: any): any =>
-  value instanceof Error ? errorToJson(value) : value
-
-const errorToJson = (e: Error): ErrorJson =>
-  ({ name: e.name, message: e.message, stack: e.stack })
+const serializeErrors = <A>(key: string, value: A): A | ErrorJson =>
+  value instanceof Error ? ({ name: value.name, message: value.message, stack: value.stack }) : value
