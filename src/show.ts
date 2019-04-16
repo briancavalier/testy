@@ -2,11 +2,29 @@ import { Assertion } from './assert'
 import { ErrorContext } from './context'
 import chalk from 'chalk'
 
+type Color = (s: string) => string
+
 export const PATH_SEP = chalk.gray.dim(' › ')
+export const SUMMARY_SEP = chalk.gray.dim(', ')
 
 export const showPath = (path: string[]): string => {
   const name = [path[0], ...path.slice(1, path.length - 1).map(s => chalk.gray.dim(s)), chalk.whiteBright(path[path.length - 1])]
   return `${name.join(PATH_SEP)}`
+}
+
+const showSummaryItem = (n: number, s: string, c: Color): string =>
+  n > 0 ? c(`${n} ${s}`) : ''
+
+
+export const showSummary = (pass: number, fail: number, skip: number, crash: number): string => {
+  const s = [
+    showSummaryItem(pass, 'passed', chalk.greenBright),
+    showSummaryItem(fail, 'failed', chalk.redBright),
+    showSummaryItem(crash, 'crashed', chalk.red.bold),
+    showSummaryItem(skip, 'skipped', chalk.yellowBright)
+  ].filter(s => s.length > 0)
+
+  return s.join(SUMMARY_SEP)
 }
 
 export const showAssertion = (path: string[], a: Assertion): string =>

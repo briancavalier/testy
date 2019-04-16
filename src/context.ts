@@ -3,26 +3,26 @@ import { promisify } from 'util'
 
 const readFileP = promisify(readFile)
 
+const LOCALTION_RX = /((?:\/[^\/]+)+\.\w+)\:(\d+)\:(\d+)/
+
 export type Location = { column: number, line: number, file: string }
-export type ErrorContext = Location & { source: string[], error: Error }
+export type ErrorContext = Location & { source: string[] }
 export type FileCache = { [k: string]: Promise<string[]> }
 
-const findLocation = (e: Error): null | Location => {
-  const stack: any = e.stack
+export const findErrorLocation = (e: Error): null | Location => {
+  const stack = e.stack
+
   if (!stack) return null
+
   const top: string = stack.split('\n')[1]
-  const m = /((?:\/[^\/]+)+\.\w+)\:(\d+)\:(\d+)/.exec(top)
+  const m = LOCALTION_RX.exec(top)
+
   if (!m) return null
+
   return { column: Number(m[3]), line: Number(m[2]), file: m[1] }
 }
 
-const readSource = (path: string, cache: FileCache): FileCache => ({
-  [path]: cache[path] || readFileP(path, 'utf-8').then(content => content.split('\n'))
-})
-
-export const getErrorContext = (e: Error, c: FileCache): [Promise<null | ErrorContext>, FileCache] => {
-  const l = findLocation(e)
-  if (!l) return [Promise.resolve(null), c]
-  const cache = readSource(l.file, c)
-  return [cache[l.file].then(source => ({ ...l, source, error: e })), cache]
+export const getErrorContext = (l: Location, c: FileCache): [Promise<null | ErrorContext>, FileCache] => {
+  const source = c[l.file] || readFileP(l.file, 'utf-8').then(content => content.split('\n'))
+  return [source.then(source => ({ ...l, source })), { [l.file]: source }]
 }
