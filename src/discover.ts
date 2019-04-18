@@ -1,16 +1,16 @@
 import { TestDiscoveryEvent } from './event'
-import { TestSpec } from './test'
+import { TestCase, TestSpec } from './test'
 
-export async function* discoverTests(files: AsyncIterable<string>): AsyncIterable<TestDiscoveryEvent> {
+export async function* discoverTests(files: AsyncIterable<string>): AsyncIterable<TestDiscoveryEvent<TestCase>> {
   for await (const file of files) {
     const path = [file]
     yield { type: 'file:enter', path }
-    yield* parseNode(path, require(file).default)
+    yield * parseNode(path, require(file).default as TestSpec<TestCase>)
     yield { type: 'file:leave', path }
   }
 }
 
-export function* parseNode(p: string[], node: TestSpec): Iterable<TestDiscoveryEvent> {
+export function* parseNode<T>(p: string[], node: TestSpec<T>): Iterable<TestDiscoveryEvent<T>> {
   const path = [...p, node.label]
   if (node.type === 'group') {
     yield { type: 'group:enter', path }
@@ -21,6 +21,6 @@ export function* parseNode(p: string[], node: TestSpec): Iterable<TestDiscoveryE
   }
 }
 
-export function* parseNodes(p: string[], nodes: TestSpec[]): Iterable<TestDiscoveryEvent> {
+export function* parseNodes<T>(p: string[], nodes: TestSpec<T>[]): Iterable<TestDiscoveryEvent<T>> {
   for (const n of nodes) yield* parseNode(p, n)
 }
