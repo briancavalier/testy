@@ -32,7 +32,7 @@ export async function* evaluateTestCase(path: string[], test: AsyncIterable<Asse
       yield { type: 'assert', path, assertion }
 
       if (!assertion.ok) {
-        yield { type: 'test:fail', path, reason: assertion.failure }
+        yield { type: 'test:fail', path, reason: assertion.reason }
         return
       }
     }

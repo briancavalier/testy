@@ -1,5 +1,9 @@
 import { describe, eq, it } from '../src'
 
+const fail = (s: string) => {
+  throw new Error(s)
+}
+
 export default describe('the thing',
   describe('nested',
     it('is nested', async function * () {
@@ -21,6 +25,6 @@ export default describe('the thing',
   }),
   it('throws', async function * () {
     yield eq(1, 1)
-    throw new Error('oops')
+    fail('oops')
   })
 )

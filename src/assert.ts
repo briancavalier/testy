@@ -1,16 +1,16 @@
 export type Assertion =
   | { ok: true, message: string }
-  | { ok: false, message: string, failure: AssertionFailed }
+  | { ok: false, message: string, reason: AssertionFailed }
 
-export const assert = (ok: boolean, message?: string): Assertion =>
-  assertion(ok, message || 'assert', assert)
+export const ok = (k: boolean, message?: string): Assertion =>
+  assert(k, message || 'assert', ok)
 
 export const eq = <A>(a0: A, a1: A, message?: string): Assertion =>
-  assertion(a0 === a1, message || `eq(${a0}, ${a1})`, eq)
+  assert(a0 === a1, message || `eq(${a0}, ${a1})`, eq)
 
-export const assertion = (ok: boolean, message: string, at: Function): Assertion =>
+export const assert = (ok: boolean, message: string, at: Function): Assertion =>
   ok ? ({ ok, message })
-    : ({ ok, message, failure: new AssertionFailed(message, at) })
+    : ({ ok, message, reason: new AssertionFailed(message, at) })
 
 export class AssertionFailed extends Error {
   constructor (public readonly message: string, at?: Function) {

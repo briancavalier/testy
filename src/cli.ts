@@ -1,7 +1,6 @@
 import { discoverTests } from './discover'
 import { evaluateTests } from './evaluate'
-import { report, reportJson } from './report'
-import getopts from 'getopts'
+import { writeJson as streamJson } from './json'
 import glob from 'tiny-glob'
 
 export async function* findTestFiles(cwd: string, globs: string[]): AsyncIterable<string> {
@@ -11,14 +10,10 @@ export async function* findTestFiles(cwd: string, globs: string[]): AsyncIterabl
   }
 }
 
-const cwd = process.cwd()
-const argv = getopts(process.argv.slice(2))
-const events = evaluateTests(discoverTests(findTestFiles(cwd, argv._)))
-const result = argv.report === 'json'
-  ? reportJson(process.stdout, events)
-  : report(cwd, process.stdout, events)
+const argv = process.argv.slice(2)
+const events = evaluateTests(discoverTests(findTestFiles(process.cwd(), argv)))
 
-result.then(code => {
+streamJson(process.stdout, events).then(code => {
   process.exit(code)
 }).catch(e => {
   console.error(e)

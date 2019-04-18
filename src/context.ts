@@ -22,7 +22,7 @@ export const findErrorLocation = (e: Error): null | Location => {
   return { column: Number(m[3]), line: Number(m[2]), file: m[1] }
 }
 
-export const getErrorContext = (l: Location, c: FileCache): [Promise<null | ErrorContext>, FileCache] => {
+export const getErrorContext = (l: Location, c: FileCache): [Promise<ErrorContext>, FileCache] => {
   const source = c[l.file] || readFileP(l.file, 'utf-8').then(content => content.split('\n'))
   return [source.then(source => ({ ...l, source })), { [l.file]: source }]
 }

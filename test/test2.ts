@@ -1,13 +1,13 @@
-import { assert, describe, eq, it } from '../src'
+import { describe, eq, it, ok } from '../src'
 
 export default describe('the thing',
   describe('nested',
     it('is nested', async function * () {
-      yield assert(1 === 1)
+      yield ok(1 === 1)
     }),
     it('fails nested', async function * () {
       const x = 1
-      yield assert(x >= 2)
+      yield ok(x >= 2)
     })
   ),
   it('runs', async function * () {
