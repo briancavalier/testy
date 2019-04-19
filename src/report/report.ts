@@ -26,7 +26,7 @@ export async function showFileContext (e: Error, cache: FileCache, out: Writable
 
   const [context, updatedCache] = getErrorContext(l, cache)
   const c = await context
-  println(`\n${showFileLink(c)}\n\n${showErrorContext(2, 2, c)}\n`, out)
+  println(`\n${showErrorContext(2, 2, c)}\n`, out)
   return { ...cache, ...updatedCache }
 }
 

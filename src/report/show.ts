@@ -38,7 +38,10 @@ export const showError = (path: string[], e: Error): string =>
   `${chalk.red.bold('Fail')} ${showPath(path)}${PATH_SEP}${chalk.red(e.message)}`
 
 export const showStack = (e: Error): string =>
-  chalk.dim.gray(e.stack || e.message)
+  chalk.dim.gray(e.stack ? highlightTop(e.stack) : e.message)
+
+const highlightTop = (stack: string): string =>
+  stack.replace(/(?:\/[^\/:)]+)+(\.[^:)]+)?/, m => chalk.white.underline(m))
 
 export const showSkip = (path: string[]): string =>
   `${chalk.yellow.bold('Skip')} ${showPath(path)}`
@@ -53,7 +56,7 @@ export const showErrorContext = (before: number, after: number, c: ErrorContext)
   const b = trimArrayLeft(c.source.slice(start, li))
   const a = trimArrayRight(c.source.slice(li + 1, end))
 
-  const numberColWidth = String(c.line + a.length).length + 1
+  const numberColWidth = String(c.line + a.length).length + 2
   const s = li - b.length;
 
   return b.map((l, i) => chalk.gray.dim(`${pad(numberColWidth, String(s + i + 1))} ${l}`)).join('\n') +

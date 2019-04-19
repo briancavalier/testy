@@ -18,6 +18,7 @@
   "dependencies": {
     "@types/node": "^11.13.4",
     "chalk": "^2.4.2",
+    "fast-deep-equal": "^2.0.1",
     "tiny-glob": "^0.2.6"
   }
 }
