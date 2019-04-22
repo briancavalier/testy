@@ -26,5 +26,9 @@ export default describe('the thing',
   it('throws', async function * () {
     yield eq(1, 1)
     fail('oops')
-  })
+  }),
+  it('todo'),
+  describe('todo group',
+    it('needs to be done')
+  )
 )

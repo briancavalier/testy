@@ -2,17 +2,17 @@ import { Assertion } from './assert'
 import { TestDiscoveryEvent, TestEvaluationEvent } from './event'
 import { TestCase } from './test'
 
-const shouldSkip = (path: string[]): boolean =>
-  path.some(p => p.trim().startsWith('//'))
+const shouldSkip = (path: string[], t: TestCase): boolean =>
+  t.shouldSkip || path.some(p => p.trim().startsWith('//'))
 
 export async function* evaluateTests(events: AsyncIterable<TestDiscoveryEvent<TestCase>>): AsyncIterable<TestEvaluationEvent> {
   for await (const event of events) {
     switch (event.type) {
       case 'test':
-        if (shouldSkip(event.path)) {
+        if (shouldSkip(event.path, event.test)) {
           yield { type: 'test:skip', path: event.path }
         } else {
-          yield* evaluateTestCase(event.path, event.test())
+          yield* evaluateTestCase(event.path, event.test.run())
         }
         break
 

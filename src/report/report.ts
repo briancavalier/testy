@@ -1,4 +1,4 @@
-import { showAssertion, showError, showErrorContext, showFileLink, showPath, showSkip, showStack, showStats, showSummary } from './show'
+import { showAssertion, showError, showErrorContext, showFail, showPath, showSkip, showStack, showStats, showSummary, showTodo } from './show'
 import { FileCache, findErrorLocation, getErrorContext } from '../context'
 import { TestEvaluationEvent } from '../event'
 import { relative } from 'path'
@@ -35,6 +35,7 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
   let tests = 0
   let fail = 0
   let skip = 0
+  let todo = 0
   let crash = 0
   let assert = 0
   let fileCache: FileCache = {}
@@ -58,32 +59,36 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
       case 'test:pass':
         if (event.assertions === 0) {
           fail += 1
-          println(showError(relativize(basePath, event.path), new Error('no assertions')), out)
+          println(showFail(relativize(basePath, event.path), new Error('no assertions')), out)
         }
         break
       case 'test:fail':
         fail += 1
+        println(showFail(relativize(basePath, event.path), event.reason), out)
         fileCache = await showFileContext(event.reason, fileCache, out)
         break
       case 'test:error':
         crash += 1
         println(showError(relativize(basePath, event.path), event.error), out)
         fileCache = await showFileContext(event.error, fileCache, out)
-        println(`${showStack(event.error)}\n`, out)
+        println(`${showStack(event.path[0], event.error)}\n`, out)
         break
       case 'assert':
         assert += 1
-        const s = showAssertion(relativize(basePath, event.path), event.assertion)
-        if (event.assertion.ok) updateln(s, out)
-        else println(s, out)
+        updateln(showAssertion(relativize(basePath, event.path), event.assertion), out)
+        break
+      case 'todo':
+        tests += 1
+        todo += 1
+        println(showTodo(relativize(basePath, event.path)), out)
         break
     }
   }
 
   const elapsed = Date.now() - start
-  const pass = tests - (fail + crash + skip)
+  const pass = tests - (fail + crash + skip + todo)
 
-  updateln(`${showSummary(elapsed, pass, fail, skip, crash)}\n${showStats(elapsed, files, tests, assert)}`, out)
+  updateln(`${showSummary(elapsed, pass, fail, skip, todo, crash)}\n${showStats(elapsed, files, tests, assert)}`, out)
 
   return fail + crash
 }

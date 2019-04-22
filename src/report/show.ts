@@ -15,12 +15,13 @@ export const showPath = (path: string[]): string => {
 const showSummaryItem = (n: number, s: string, c: Color): string =>
   n > 0 ? c(`${n} ${s}`) : ''
 
-export const showSummary = (time: number, pass: number, fail: number, skip: number, crash: number): string => {
+export const showSummary = (time: number, pass: number, fail: number, skip: number, todo: number, crash: number): string => {
   const s = [
     showSummaryItem(pass, 'passed', chalk.greenBright),
     showSummaryItem(fail, 'failed', chalk.redBright),
     showSummaryItem(crash, 'crashed', chalk.red.bold),
-    showSummaryItem(skip, 'skipped', chalk.yellowBright)
+    showSummaryItem(skip, 'skipped', chalk.yellowBright),
+    showSummaryItem(todo, 'todo', chalk.cyanBright)
   ].filter(s => s.length > 0)
 
   return `${s.join(SUMMARY_SEP)} ${chalk.gray.dim(`(${time}ms)`)}`
@@ -32,22 +33,39 @@ export const showStats = (time: number, files: number, tests: number, assert: nu
     `, ${files} files (${(1000 * files / time).toFixed(1)}/sec)`)
 
 export const showAssertion = (path: string[], a: Assertion): string =>
-  `${chalk.red.bold('Fail')} ${showPath(path)}${PATH_SEP}${(a.ok ? a.message : chalk.red(a.message))}`
+  `${showPath(path)}${PATH_SEP}${(a.ok ? a.message : chalk.red(a.message))}`
 
-export const showError = (path: string[], e: Error): string =>
-  `${chalk.red.bold('Fail')} ${showPath(path)}${PATH_SEP}${chalk.red(e.message)}`
-
-export const showStack = (e: Error): string =>
-  chalk.dim.gray(e.stack ? highlightTop(e.stack) : e.message)
-
-const highlightTop = (stack: string): string =>
-  stack.replace(/(?:\/[^\/:)]+)+(\.[^:)]+)?/, m => chalk.white.underline(m))
+export const showTodo = (path: string[]): string =>
+  `${chalk.cyanBright('Todo ')} ${showPath(path)}`
 
 export const showSkip = (path: string[]): string =>
-  `${chalk.yellow.bold('Skip')} ${showPath(path)}`
+  `${chalk.yellowBright('Skip ')} ${showPath(path)}`
 
-export const showFileLink = (c: ErrorContext): string =>
-  chalk.underline(`${c.file}:${c.line}:${c.column}`)
+export const showFail = (path: string[], e: Error): string =>
+  `${chalk.redBright('Fail ')} ${showPath(path)}${PATH_SEP}${chalk.red(e.message)}`
+
+export const showError = (path: string[], e: Error): string =>
+  `${chalk.red.bold('Crash')} ${showPath(path)}${PATH_SEP}${chalk.red(e.message)}`
+
+export const showStack = (path: string, e: Error): string =>
+  chalk.dim.gray(e.stack ? highlightStack(trimStack(path, e.stack)) : e.message)
+
+export const trimStack = (path: string, stack: string): string => {
+  const frames = stack.split('\n')
+  const s = []
+  let i = frames.length - 1
+  for (; i >= 0; --i) {
+    if(frames[i].indexOf(path) >= 0) {
+      return frames.slice(0, i + 1).join('\n')
+    }
+  }
+  return stack
+}
+
+const stackFrameLocation = /\((.+:\d+:\d+)\)/g
+
+export const highlightStack = (stack: string): string =>
+  stack.replace(stackFrameLocation, (_, location) => `(${chalk.white(location)})`)
 
 export const showErrorContext = (before: number, after: number, c: ErrorContext): string => {
   const li = c.line - 1

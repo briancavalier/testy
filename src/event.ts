@@ -5,6 +5,7 @@ export type TestTreeEvent =
   | { type: 'group:leave', path: string[] }
   | { type: 'file:enter', path: string[] }
   | { type: 'file:leave', path: string[] }
+  | { type: 'todo', path: string[] }
 
 export type TestDiscoveryEvent<T> =
   | TestTreeEvent
