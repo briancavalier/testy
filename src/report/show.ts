@@ -48,13 +48,11 @@ export const showError = (path: string[], e: Error): string =>
   `${chalk.red.bold('Crash')} ${showPath(path)}${PATH_SEP}${chalk.red(e.message)}`
 
 export const showStack = (path: string, e: Error): string =>
-  chalk.dim.gray(e.stack ? highlightStack(trimStack(path, e.stack)) : e.message)
+  ` ${chalk.dim.gray(e.stack ? highlightStack(trimStack(path, e.stack)) : e.message)}`
 
 export const trimStack = (path: string, stack: string): string => {
   const frames = stack.split('\n')
-  const s = []
-  let i = frames.length - 1
-  for (; i >= 0; --i) {
+  for (let i = frames.length - 1; i >= 0; --i) {
     if(frames[i].indexOf(path) >= 0) {
       return frames.slice(0, i + 1).join('\n')
     }
