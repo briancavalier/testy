@@ -7,7 +7,12 @@
     "build": "tsc",
     "test": "tsc --noEmit"
   },
-  "bin": "./dist/cli.js",
+  "bin": {
+    "testy": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
   "keywords": [],
   "author": "",
   "license": "MIT",

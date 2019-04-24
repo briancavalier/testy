@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { discoverTests } from './discover'
 import { evaluateTests } from './evaluate'
 import { writeJson as streamJson } from './json'
