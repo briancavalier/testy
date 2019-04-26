@@ -1,9 +1,8 @@
 #!/usr/bin/env node
-
+import glob from 'tiny-glob'
 import { discoverTests } from './discover'
 import { evaluateTests } from './evaluate'
 import { writeJson as streamJson } from './json'
-import glob from 'tiny-glob'
 
 export async function* findTestFiles(cwd: string, globs: string[]): AsyncIterable<string> {
   const options = { absolute: true, filesOnly: true, cwd }

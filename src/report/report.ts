@@ -1,5 +1,5 @@
 import { showAssertion, showError, showErrorContext, showFail, showPath, showSkip, showStack, showStats, showSummary, showTodo } from './show'
-import { FileCache, findErrorLocation, getErrorContext } from '../context'
+import { FileCache, findErrorLocation, getErrorContext } from './context'
 import { TestEvaluationEvent } from '../event'
 import { relative } from 'path'
 import { clearLine, cursorTo } from 'readline'
@@ -20,8 +20,8 @@ const updateln = (s: string, w: Writable): void => {
 const relativize = (base: string, path: string[]): string[] =>
   [relative(base, path[0]), ...path.slice(1)]
 
-export async function showFileContext (e: Error, cache: FileCache, out: Writable): Promise<FileCache> {
-  const l = findErrorLocation(e)
+export async function showFileContext(path: string, e: Error, cache: FileCache, out: Writable): Promise<FileCache> {
+  const l = findErrorLocation(path, e)
   if (!l) return cache
 
   const [context, updatedCache] = getErrorContext(l, cache)
@@ -56,21 +56,15 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
         tests += 1
         updateln(showPath(relativize(basePath, event.path)), out)
         break
-      case 'test:pass':
-        if (event.assertions === 0) {
-          fail += 1
-          println(showFail(relativize(basePath, event.path), new Error('no assertions')), out)
-        }
-        break
       case 'test:fail':
         fail += 1
         println(showFail(relativize(basePath, event.path), event.reason), out)
-        fileCache = await showFileContext(event.reason, fileCache, out)
+        fileCache = await showFileContext(event.path[0], event.reason, fileCache, out)
         break
       case 'test:error':
         crash += 1
         println(showError(relativize(basePath, event.path), event.error), out)
-        fileCache = await showFileContext(event.error, fileCache, out)
+        fileCache = await showFileContext(event.path[0], event.error, fileCache, out)
         println(`${showStack(event.path[0], event.error)}\n`, out)
         break
       case 'assert':

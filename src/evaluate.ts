@@ -38,7 +38,9 @@ export async function* evaluateTestCase(path: string[], test: AsyncIterable<Asse
       }
     }
 
-    yield { type: 'test:pass', path, assertions }
+    yield assertions === 0
+      ? { type: 'test:fail', path, reason: new Error('no assertions') }
+      : { type: 'test:pass', path, assertions }
   } catch (error) {
     yield { type: 'test:error', path, error }
   }

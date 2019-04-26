@@ -1,5 +1,5 @@
 import { Assertion } from '../assert'
-import { ErrorContext } from '../context'
+import { ErrorContext } from './context'
 import chalk from 'chalk'
 
 type Color = (s: string) => string
@@ -53,7 +53,7 @@ export const showStack = (path: string, e: Error): string =>
 export const trimStack = (path: string, stack: string): string => {
   const frames = stack.split('\n')
   for (let i = frames.length - 1; i >= 0; --i) {
-    if(frames[i].indexOf(path) >= 0) {
+    if (frames[i].indexOf(path) >= 0) {
       return frames.slice(0, i + 1).join('\n')
     }
   }
@@ -94,5 +94,6 @@ const trimArrayRight = (a: string[]): string[] => {
   return a
 }
 
+const PADDING = '          '
 const pad = (max: number, s: string): string =>
-  max > s.length ? `${Array(1 + max - s.length).join(' ')}${s}` : s
+  max > s.length ? `${PADDING.slice(0, max - s.length)}${s}` : s

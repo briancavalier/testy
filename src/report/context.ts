@@ -9,10 +9,10 @@ export type Location = { column: number, line: number, file: string }
 export type ErrorContext = Location & { source: string[] }
 export type FileCache = { [k: string]: Promise<string[]> }
 
-export const findErrorLocation = (e: Error): null | Location => {
+export const findErrorLocation = (path: string, e: Error): null | Location => {
   const stack = e.stack
 
-  if (!stack) return null
+  if (!stack || stack.indexOf(path) < 0) return null
 
   const top: string = stack.split('\n')[1]
   const m = LOCALTION_RX.exec(top)
