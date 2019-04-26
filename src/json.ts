@@ -1,5 +1,6 @@
-import { TestEvaluationEvent } from './event'
 import { Writable } from 'stream'
+
+import { TestEvaluationEvent } from './types'
 
 type ErrorJson = {
   name: string | undefined,
@@ -7,7 +8,7 @@ type ErrorJson = {
   stack: string | undefined
 }
 
-export async function writeJson(out: Writable, events: AsyncIterable<TestEvaluationEvent>): Promise<number> {
+export async function writeJson<C, A>(out: Writable, events: AsyncIterable<TestEvaluationEvent<C, A>>): Promise<number> {
   for await (const event of events) {
     out.write(`${JSON.stringify(event, serializeErrors)}\n`)
   }

@@ -1,9 +1,13 @@
-import { showAssertion, showError, showErrorContext, showFail, showPath, showSkip, showStack, showStats, showSummary, showTodo } from './show'
-import { FileCache, findErrorLocation, getErrorContext } from './context'
-import { TestEvaluationEvent } from '../event'
 import { relative } from 'path'
 import { clearLine, cursorTo } from 'readline'
 import { Writable } from 'stream'
+
+import { Assertion, TestContext, TestEvaluationEvent } from '../types'
+import { FileCache, findErrorLocation, getErrorContext } from './context'
+import {
+  showAssertion, showError, showErrorContext, showFail, showPath, showSkip, showStack, showStats,
+  showSummary, showTodo
+} from './show'
 
 const println = (s: string, w: Writable): void => {
   clearLine(w, 0)
@@ -30,7 +34,7 @@ export async function showFileContext(path: string, e: Error, cache: FileCache, 
   return { ...cache, ...updatedCache }
 }
 
-export async function report(basePath: string, out: Writable, events: AsyncIterable<TestEvaluationEvent>): Promise<number> {
+export async function report(basePath: string, out: Writable, events: AsyncIterable<TestEvaluationEvent<TestContext, Assertion>>): Promise<number> {
   let files = 0
   let tests = 0
   let fail = 0

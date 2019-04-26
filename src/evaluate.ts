@@ -1,18 +1,16 @@
-import { Assertion } from './assert'
-import { TestDiscoveryEvent, TestEvaluationEvent } from './event'
-import { TestCase } from './test'
+import { RunTest } from './describe'
+import { Assertion, TestContext, TestDiscoveryEvent, TestEvaluationEvent } from './types'
 
-const shouldSkip = (path: string[], t: TestCase): boolean =>
-  t.shouldSkip || path.some(p => p.trim().startsWith('//'))
-
-export async function* evaluateTests(events: AsyncIterable<TestDiscoveryEvent<TestCase>>): AsyncIterable<TestEvaluationEvent> {
+export async function* evaluateTests(events: AsyncIterable<TestDiscoveryEvent<TestContext, RunTest>>): AsyncIterable<TestEvaluationEvent<TestContext, Assertion>> {
   for await (const event of events) {
     switch (event.type) {
       case 'test':
-        if (shouldSkip(event.path, event.test)) {
-          yield { type: 'test:skip', path: event.path }
+        const { path, context } = event
+        if (context.shouldSkip) {
+          yield { type: 'test:skip', path }
         } else {
-          yield* evaluateTestCase(event.path, event.test.run())
+          yield { type: 'test:start', path, context }
+          yield* evaluateTestCase(event.path, context.timeout, event.test())
         }
         break
 
@@ -23,11 +21,10 @@ export async function* evaluateTests(events: AsyncIterable<TestDiscoveryEvent<Te
   }
 }
 
-export async function* evaluateTestCase(path: string[], test: AsyncIterable<Assertion>): AsyncIterable<TestEvaluationEvent> {
-  yield { type: 'test:start', path }
-
+export async function* evaluateTestCase<C>(path: string[], timeout: number, test: AsyncIterable<Assertion>): AsyncIterable<TestEvaluationEvent<C, Assertion>> {
   try {
     let assertions = 0
+    const deadline = Date.now() + timeout
     for await (const assertion of test) {
       assertions += 1
       yield { type: 'assert', path, assertion }
@@ -36,11 +33,16 @@ export async function* evaluateTestCase(path: string[], test: AsyncIterable<Asse
         yield { type: 'test:fail', path, reason: assertion.reason }
         return
       }
+
+      if (Date.now() > deadline) {
+        yield { type: 'test:fail', path, reason: new Error(`${timeout}ms time budget exceeded`) }
+        return
+      }
     }
 
     yield assertions === 0
       ? { type: 'test:fail', path, reason: new Error('no assertions') }
-      : { type: 'test:pass', path, assertions }
+      : { type: 'test:pass', path }
   } catch (error) {
     yield { type: 'test:error', path, error }
   }

@@ -8,7 +8,7 @@
     "test": "tsc --noEmit"
   },
   "bin": {
-    "testy": "./dist/cli.js"
+    "testy": "./bin/testy"
   },
   "files": [
     "dist"

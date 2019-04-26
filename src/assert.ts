@@ -1,8 +1,6 @@
 import equal from 'fast-deep-equal'
 
-export type Assertion =
-  | { ok: true, message: string }
-  | { ok: false, message: string, reason: Error }
+import { Assertion } from './types'
 
 export const ok = (k: boolean, message?: string): Assertion =>
   assert(k, message || 'ok', ok)

@@ -1,6 +1,7 @@
-import { Assertion } from '../assert'
-import { ErrorContext } from './context'
 import chalk from 'chalk'
+
+import { Assertion } from '../types'
+import { ErrorContext } from './context'
 
 type Color = (s: string) => string
 
