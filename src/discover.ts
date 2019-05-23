@@ -1,4 +1,4 @@
-import { TestContext, TestDiscoveryEvent, TestSpec } from './types'
+import { TestDiscoveryEvent, TestSpec } from './types'
 
 export async function* discoverTests<C, T>(defaultContext: C, files: AsyncIterable<string>): AsyncIterable<TestDiscoveryEvent<C, T>> {
   for await (const file of files) {

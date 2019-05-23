@@ -2,7 +2,7 @@ import { Assertion, TestContext, TestSpec } from './types'
 
 export type RunTest = () => AsyncIterable<Assertion>
 
-export const test = <C, T>(label: string, node: TestSpec<Partial<C>, T>, ...nodes: TestSpec<Partial<C>, T>[]): TestSpec<Partial<C>, T> =>
+export const describe = <C, T>(label: string, node: TestSpec<Partial<C>, T>, ...nodes: TestSpec<Partial<C>, T>[]): TestSpec<Partial<C>, T> =>
   ({ type: 'group', label, context: {}, nodes: [node, ...nodes] })
 
 export const it = <T>(label: string, test?: T): TestSpec<Partial<TestContext>, T> =>

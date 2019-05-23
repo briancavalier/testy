@@ -1,8 +1,25 @@
-import { eq, it } from '../src'
+import { describe, eq, it } from '../src'
 
-const fail = (s: string) => {
+const crash = (s: string) => {
   throw new Error(s)
 }
+
+const given = describe
+
+export const t1 = describe('the thing',
+  given('whatever',
+    it('does the stuff', async function* () {
+      yield eq(1, 1)
+    }),
+    it(`doesn't do the other stuff`, async function* () {
+      yield eq(1, 2)
+    })
+  )
+)
+
+export const test0 = it('passing test', async function* () {
+  yield eq(1, 1, 'passes')
+})
 
 export const test1 = it('the thing', async function* () {
   yield eq(1, 1, 'runs')
@@ -16,35 +33,5 @@ export const test3 = it('//skipped', async function* () {
 })
 
 export const test4 = it('crashes', async function* () {
-  fail('oops')
+  crash('oops')
 })
-//   describe('nested',
-//   it('is nested', async function* () {
-//     yield eq(1, 1)
-//   }),
-//   it('//does not execute', async function* () {
-//     yield eq(1, 1)
-//     throw new Error()
-//   })
-// ),
-//   it('runs', async function* () {
-//     yield Promise.resolve(eq(1, 1))
-//   }),
-//   it('fails with timeout', async function* () {
-//     yield new Promise<Assertion>(resolve => setTimeout(resolve, 210, eq(1, 1)))
-//   }),
-//   it('has no assertions', async function* (): AsyncIterable<any> { }),
-//   it('fails', async function* () {
-//     yield eq(1, 1)
-//     yield eq(1, 2)
-//     yield eq(1, 1)
-//   }),
-//   it('throws', async function* () {
-//     yield eq(1, 1)
-//     fail('oops')
-//   }),
-//   it('todo'),
-//   describe('todo group',
-//     it('needs to be done')
-//   )
-// )

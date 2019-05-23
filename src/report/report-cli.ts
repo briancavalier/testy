@@ -1,6 +1,6 @@
 import { createInterface } from 'readline'
 
-import { parseJsonStream } from '../json'
+import { parseJsonStream } from '../run/json'
 import { Assertion, TestContext, TestEvaluationEvent } from '../types'
 import { report } from './report'
 
