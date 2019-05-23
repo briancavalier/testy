@@ -3,7 +3,7 @@ import { promisify } from 'util'
 
 const readFileP = promisify(readFile)
 
-const LOCALTION_RX = /((?:\/[^\/]+)+\.\w+)\:(\d+)\:(\d+)/
+const LOCATION_RX = /((?:\/[^\/]+)+\.\w+)\:(\d+)\:(\d+)/
 
 export type Location = { column: number, line: number, file: string }
 export type ErrorContext = Location & { source: string[] }
@@ -15,7 +15,7 @@ export const findErrorLocation = (path: string, e: Error): null | Location => {
   if (!stack || stack.indexOf(path) < 0) return null
 
   const top: string = stack.split('\n')[1]
-  const m = LOCALTION_RX.exec(top)
+  const m = LOCATION_RX.exec(top)
 
   if (!m) return null
 

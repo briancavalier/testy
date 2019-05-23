@@ -6,7 +6,7 @@ export async function* discoverTests<T>(files: AsyncIterable<string>): AsyncIter
   for await (const file of files) {
     const path = [file]
     yield { type: 'file:enter', path }
-    yield* parseNode(path, defaultContext, require(file).default as TestSpec<TestContext, T | null>)
+    yield* parseNodes(path, defaultContext, Object.values(require(file)) as TestSpec<TestContext, T | null>[])
     yield { type: 'file:leave', path }
   }
 }

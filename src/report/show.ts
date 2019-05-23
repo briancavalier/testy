@@ -34,7 +34,8 @@ export const showStats = (time: number, files: number, tests: number, assert: nu
     `, ${files} files (${(1000 * files / time).toFixed(1)}/sec)`)
 
 export const showAssertion = (path: string[], a: Assertion): string =>
-  `${showPath(path)}${PATH_SEP}${(a.ok ? a.message : chalk.red(a.message))}`
+  `${showPath(path)}${PATH_SEP}${(a.ok ? chalk.green(a.message)
+    : chalk.red(a.message))}`
 
 export const showTodo = (path: string[]): string =>
   `${chalk.cyanBright('Todo ')} ${showPath(path)}`
@@ -73,7 +74,7 @@ export const showErrorContext = (before: number, after: number, c: ErrorContext)
   const b = trimArrayLeft(c.source.slice(start, li))
   const a = trimArrayRight(c.source.slice(li + 1, end))
 
-  const numberColWidth = String(c.line + a.length).length + 2
+  const numberColWidth = String(c.source.length).length + 1
   const s = li - b.length;
 
   return b.map((l, i) => chalk.gray.dim(`${pad(numberColWidth, String(s + i + 1))} ${l}`)).join('\n') +

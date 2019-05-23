@@ -86,7 +86,7 @@ export async function report(basePath: string, out: Writable, events: AsyncItera
   const elapsed = Date.now() - start
   const pass = tests - (fail + crash + skip + todo)
 
-  updateln(`${showSummary(elapsed, pass, fail, skip, todo, crash)}\n${showStats(elapsed, files, tests, assert)}`, out)
+  updateln(`\n${showSummary(elapsed, pass, fail, skip, todo, crash)}\n${showStats(elapsed, files, tests, assert)}`, out)
 
   return fail + crash
 }
