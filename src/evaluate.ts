@@ -6,7 +6,7 @@ export async function* evaluateTests(events: AsyncIterable<TestDiscoveryEvent<Te
     switch (event.type) {
       case 'test':
         const { path, context } = event
-        if (context.shouldSkip) {
+        if (context.skip) {
           yield { type: 'test:skip', path }
         } else {
           yield { type: 'test:start', path, context }

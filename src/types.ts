@@ -19,11 +19,12 @@ export type TestEvaluationEvent<C, A> =
   | { type: 'assert', path: string[], assertion: A }
 
 export type TestSpec<C, T> =
-  | { type: 'group', label: string, context: Partial<C>, nodes: TestSpec<C, T>[] }
-  | { type: 'test', label: string, context: Partial<C>, test: T }
+  | { type: 'group', label: string, context: C, nodes: TestSpec<C, T>[] }
+  | { type: 'test', label: string, context: C, test: T }
+  | { type: 'todo', label: string }
 
 export type Assertion =
   | { ok: true, message: string }
   | { ok: false, message: string, reason: Error }
 
-export type TestContext = { timeout: number, shouldSkip: boolean }
+export type TestContext = { timeout: number, skip: boolean }
