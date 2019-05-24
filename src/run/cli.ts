@@ -8,7 +8,7 @@ import { toJson } from './json'
 
 const defaultContext: TestContext = { timeout: 200, skip: false }
 
-export async function* findTestFiles(cwd: string, globs: string[]): AsyncIterable<string> {
+export async function* findTestFiles(cwd: string, globs: ReadonlyArray<string>): AsyncIterable<string> {
   const options = { absolute: true, filesOnly: true, cwd }
   for (const g of globs) {
     yield* await glob(g, options)
