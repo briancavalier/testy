@@ -9,11 +9,8 @@ import {
   showSummary, showTodo
 } from './show'
 
-const println = (s: string, w: Writable): void => {
-  clearLine(w, 0)
-  cursorTo(w, 0)
-  w.write(`${s}\n`)
-}
+const println = (s: string, w: Writable): void =>
+  updateln(`${s}\n`, w)
 
 const updateln = (s: string, w: Writable): void => {
   clearLine(w, 0)
