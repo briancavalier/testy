@@ -9,7 +9,9 @@ export default describe('the thing',
     yield eq(1, 1)
   }),
   it('fails', async function* () {
-    yield eq(1, 2)
+    const x = 1
+    const y = 2
+    yield eq(x, y)
   }),
   it('passing test', async function* () {
     yield eq(1, 1, 'passes')

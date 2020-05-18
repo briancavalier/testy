@@ -22,6 +22,6 @@ export function* parseNode<C, T>(p: string[], c: C, node: TestSpec<Partial<C>, T
   }
 }
 
-export function* parseNodes<C, T>(p: string[], context: C, nodes: TestSpec<Partial<C>, T>[]): Iterable<TestDiscoveryEvent<C, T>> {
+export function* parseNodes<C, T>(p: string[], context: C, nodes: Iterable<TestSpec<Partial<C>, T>>): Iterable<TestDiscoveryEvent<C, T>> {
   for (const node of nodes) yield* parseNode(p, context, node)
 }

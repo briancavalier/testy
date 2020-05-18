@@ -1,4 +1,4 @@
-import { eq, it, test } from '../src'
+import { describe as test, eq, it } from '../src'
 
 export default test('the thing',
   test('nested',

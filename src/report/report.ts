@@ -18,7 +18,7 @@ const updateln = (s: string, w: Writable): void => {
   w.write(s)
 }
 
-const relativize = (base: string, path: string[]): string[] =>
+const relativize = (base: string, path: readonly string[]): string[] =>
   [relative(base, path[0]), ...path.slice(1)]
 
 export async function showFileContext(path: string, e: Error, cache: FileCache, out: Writable): Promise<FileCache> {
@@ -27,7 +27,7 @@ export async function showFileContext(path: string, e: Error, cache: FileCache, 
 
   const [context, updatedCache] = getErrorContext(l, cache)
   const c = await context
-  println(`\n${showErrorContext(2, 2, c)}\n`, out)
+  println(`\n${showErrorContext(2, 2, c, e)}\n`, out)
   return { ...cache, ...updatedCache }
 }
 

@@ -3,8 +3,8 @@ import glob from 'tiny-glob'
 
 import { discoverTests } from '../discover'
 import { evaluateTests } from '../evaluate'
+import { toJson } from '../json'
 import { TestContext } from '../types'
-import { toJson } from './json'
 
 const defaultContext: TestContext = { timeout: 200, skip: false }
 
