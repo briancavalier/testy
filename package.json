@@ -20,7 +20,7 @@
   "devDependencies": {
     "@types/node": "14.0.1",
     "ts-node": "8.10.1",
-    "typescript": "3.9.2"
+    "typescript": "7.0.2"
   },
   "dependencies": {
     "chalk": "^4.0.0",
